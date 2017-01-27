@@ -1,0 +1,73 @@
+html, body {
+  padding: 0;
+  margin: 0;
+  height: 100%;
+  width: 100%; }
+
+#app {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100vw; }
+
+.home {
+  background-color: "blue"; }
+
+.matrix {
+  display: inline-block;
+  margin: 10px; }
+  .matrix .matrix-row {
+    display: flex;
+    background-color: gray; }
+
+.pixel {
+  display: flex;
+  width: 33px;
+  height: 33px;
+  border: 1px solid black;
+  margin: 3px; }
+
+.result {
+  width: 400px;
+  height: 250px;
+  margin: 30px; }
+
+.navbar {
+  background-color: #FFFFFF;
+  display: flex;
+  align-content: center;
+  width: 100%;
+  height: 72px;
+  padding: 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.16); }
+  .navbar .logo {
+    width: 50px;
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    top: 54%; }
+  .navbar .profile-icon {
+    color: black;
+    position: absolute;
+    left: 90%;
+    align-self: center;
+    height: 100%;
+    text-align: center;
+    align-items: center;
+    cursor: pointer;
+    display: flex;
+    font-size: 200%;
+    font-weight: 500; }
+
+.button {
+  background-color: gray;
+  color: beige;
+  display: flex;
+  width: 100px;
+  cursor: default;
+  border: 2px solid black;
+  border-radius: 5px;
+  margin: 10px; }
+
+.btselect {
+  background-color: red; }
