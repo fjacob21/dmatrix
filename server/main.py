@@ -5,6 +5,16 @@ import os
 
 application = Flask(__name__, static_url_path='')
 
+@application.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers['Cache-Control'] = 'public, max-age=0'
+    return response
+
+@application.route('/active')
+def active():
+    return jsonify({"active": True})
+
 @application.route('/upload', methods=['POST'])
 def upload():
     data = request.get_json()
@@ -15,7 +25,7 @@ def upload():
         content = f.read();
         content = content.replace('///BITMAP///', data['bitmap'])
     with open('dmatrix/dmatrix.ino', 'w') as f:
-        f.write(content);
+        f.write(content)
 
     res= os.system('arduino --verbose-upload --port /dev/ttyACM0 --upload dmatrix/dmatrix.ino')
     return jsonify({"result":res})

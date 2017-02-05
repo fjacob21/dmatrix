@@ -1,6 +1,15 @@
 import React from 'react'
 
+const blackColor = "#cecac7";
+const redColor = "#ff102d";
+// const yellowColor = "#ffff31"; //More yellow color!!!!
+const yellowColor = "#f78211";
+const greenColor = "#8bff2c";
+const colors = [blackColor, redColor, yellowColor, greenColor];
+
 class Pixel extends React.Component{
+
+
         constructor(props) {
                 super(props);
                 this.state = {value: this.props.value};
@@ -38,10 +47,8 @@ class Pixel extends React.Component{
                 }
         }
         render(){
-                const colors = ['#cecac7', '#ff102d', '#ffff31', '#8bff2c'];
-
                 const divStyle = {
-                 backgroundColor: colors[this.state.value]
+                        backgroundColor: colors[this.state.value]
                 };
 
                 return (

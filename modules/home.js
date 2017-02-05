@@ -1,5 +1,6 @@
 import React from 'react'
 import Pixel from './pixel'
+import Service from './service'
 
 class Home extends React.Component{
         constructor(props) {
@@ -17,8 +18,23 @@ class Home extends React.Component{
                 else {
                         matrix = JSON.parse(matrix);
                 }
+                var s = new Service();
+                s.isActive().then(function (){this.state.active = true; this.setState(this.state);}.bind(this));
+                this.state = {color: "#FF0000", matrix: matrix, active: false, service: s};
 
-                this.state = {color: "#FF0000", matrix: matrix};
+        }
+
+        buildBitmap() {
+                var result = "const uint16_t bitmap[8][8] = {\n";
+                this.state.matrix.map(function (row, i) {
+                        result += "{";
+                        var matrixRow = row.map(function (item, j) {
+                        result += item + ", ";
+                        }.bind(this));
+                        result += "},\n";
+                 }.bind(this));
+                result += "};";
+                return result;
         }
 
         onChange(x, y, value){
@@ -40,52 +56,33 @@ class Home extends React.Component{
         }
 
         upload(event){
-                var result = "const uint16_t bitmap[8][8] = {\n";
-                this.state.matrix.map(function (row, i) {
-                        result += "{";
-                        var matrixRow = row.map(function (item, j) {
-                        result += item + ", ";
-                        }.bind(this));
-                        result += "},\n";
-                 }.bind(this));
-                 result += "};";
-                 var data = {bitmap: result};
-                 $.ajax({
-                 type: 'POST',
-                 url: "/upload" ,
-                 data: JSON.stringify (data),
-                 success: this.success.bind(this),
-                 error: this.error.bind(this),
-                 contentType: "application/json",
-                 dataType: 'json'
-                 });
+                 this.state.service.upload(this.buildBitmap()).fail(function (){alert('error')}.bind(this));
         }
 
         render(){
-                var result = "const uint16_t bitmap[8][8] = {\n";
                 var matrix = this.state.matrix.map(function (row, i) {
-                        result += "{";
                         var matrixRow = row.map(function (item, j) {
-                        result += item + ", ";
                         return (
                                 <Pixel key={String(i)+String(j)} x={j} y={i} value={item} onChange={this.onChange.bind(this)}/>
                         );
                         }.bind(this));
-                        result += "},\n";
                         return (
                                 <div key={i} className='matrix-row'>
                                 {matrixRow}
                                 </div>
                         );
                  }.bind(this));
-                 result += "};";
+                 var result = this.buildBitmap();
+                 var uploadbt = "";
+                 if (this.state.active)
+                        uploadbt = <button onClick={this.upload.bind(this)}>Upload</button>;
                 return (
                         <div className='home'>
                                 <div className='matrix'>
                                 {matrix}
                                 </div>
                                 <textarea className='result' rows="4" cols="50" value={result} onChange={this.onTextChange.bind(this)}/>
-                                <button onClick={this.upload.bind(this)}>Upload</button>
+                                {uploadbt}
                         </div>)
         }
 }

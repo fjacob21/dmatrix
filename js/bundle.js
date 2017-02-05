@@ -58,7 +58,7 @@
 
 	var _home2 = _interopRequireDefault(_home);
 
-	var _app = __webpack_require__(235);
+	var _app = __webpack_require__(236);
 
 	var _app2 = _interopRequireDefault(_app);
 
@@ -26805,6 +26805,10 @@
 
 	var _pixel2 = _interopRequireDefault(_pixel);
 
+	var _service = __webpack_require__(235);
+
+	var _service2 = _interopRequireDefault(_service);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -26834,12 +26838,30 @@
 	                } else {
 	                        matrix = JSON.parse(matrix);
 	                }
+	                var s = new _service2.default();
+	                s.isActive().then(function () {
+	                        this.state.active = true;this.setState(this.state);
+	                }.bind(_this));
+	                _this.state = { color: "#FF0000", matrix: matrix, active: false, service: s };
 
-	                _this.state = { color: "#FF0000", matrix: matrix };
 	                return _this;
 	        }
 
 	        _createClass(Home, [{
+	                key: 'buildBitmap',
+	                value: function buildBitmap() {
+	                        var result = "const uint16_t bitmap[8][8] = {\n";
+	                        this.state.matrix.map(function (row, i) {
+	                                result += "{";
+	                                var matrixRow = row.map(function (item, j) {
+	                                        result += item + ", ";
+	                                }.bind(this));
+	                                result += "},\n";
+	                        }.bind(this));
+	                        result += "};";
+	                        return result;
+	                }
+	        }, {
 	                key: 'onChange',
 	                value: function onChange(x, y, value) {
 	                        this.state.matrix[y][x] = value;
@@ -26864,44 +26886,30 @@
 	        }, {
 	                key: 'upload',
 	                value: function upload(event) {
-	                        var result = "const uint16_t bitmap[8][8] = {\n";
-	                        this.state.matrix.map(function (row, i) {
-	                                result += "{";
-	                                var matrixRow = row.map(function (item, j) {
-	                                        result += item + ", ";
-	                                }.bind(this));
-	                                result += "},\n";
+	                        this.state.service.upload(this.buildBitmap()).fail(function () {
+	                                alert('error');
 	                        }.bind(this));
-	                        result += "};";
-	                        var data = { bitmap: result };
-	                        $.ajax({
-	                                type: 'POST',
-	                                url: "/upload",
-	                                data: JSON.stringify(data),
-	                                success: this.success.bind(this),
-	                                error: this.error.bind(this),
-	                                contentType: "application/json",
-	                                dataType: 'json'
-	                        });
 	                }
 	        }, {
 	                key: 'render',
 	                value: function render() {
-	                        var result = "const uint16_t bitmap[8][8] = {\n";
 	                        var matrix = this.state.matrix.map(function (row, i) {
-	                                result += "{";
 	                                var matrixRow = row.map(function (item, j) {
-	                                        result += item + ", ";
 	                                        return _react2.default.createElement(_pixel2.default, { key: String(i) + String(j), x: j, y: i, value: item, onChange: this.onChange.bind(this) });
 	                                }.bind(this));
-	                                result += "},\n";
 	                                return _react2.default.createElement(
 	                                        'div',
 	                                        { key: i, className: 'matrix-row' },
 	                                        matrixRow
 	                                );
 	                        }.bind(this));
-	                        result += "};";
+	                        var result = this.buildBitmap();
+	                        var uploadbt = "";
+	                        if (this.state.active) uploadbt = _react2.default.createElement(
+	                                'button',
+	                                { onClick: this.upload.bind(this) },
+	                                'Upload'
+	                        );
 	                        return _react2.default.createElement(
 	                                'div',
 	                                { className: 'home' },
@@ -26911,11 +26919,7 @@
 	                                        matrix
 	                                ),
 	                                _react2.default.createElement('textarea', { className: 'result', rows: '4', cols: '50', value: result, onChange: this.onTextChange.bind(this) }),
-	                                _react2.default.createElement(
-	                                        'button',
-	                                        { onClick: this.upload.bind(this) },
-	                                        'Upload'
-	                                )
+	                                uploadbt
 	                        );
 	                }
 	        }]);
@@ -26929,7 +26933,7 @@
 /* 234 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
+	"use strict";
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -26945,6 +26949,13 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+	var blackColor = "#cecac7";
+	var redColor = "#ff102d";
+	// const yellowColor = "#ffff31"; //More yellow color!!!!
+	var yellowColor = "#f78211";
+	var greenColor = "#8bff2c";
+	var colors = [blackColor, redColor, yellowColor, greenColor];
+
 	var Pixel = function (_React$Component) {
 	        _inherits(Pixel, _React$Component);
 
@@ -26958,7 +26969,7 @@
 	        }
 
 	        _createClass(Pixel, [{
-	                key: 'onClick',
+	                key: "onClick",
 	                value: function onClick(event) {
 	                        event.preventDefault();
 	                        if (event.altKey && event.ctrlKey) this.state.value = 0;else if (event.altKey) this.state.value = 1;else if (event.ctrlKey) this.state.value = 2;else if (event.shiftKey) this.state.value = 3;else this.state.value = (this.state.value + 1) % 4;
@@ -26966,7 +26977,7 @@
 	                        this.props.onChange(this.props.x, this.props.y, this.state.value);
 	                }
 	        }, {
-	                key: 'onEnter',
+	                key: "onEnter",
 	                value: function onEnter(event) {
 	                        event.preventDefault();
 	                        if (event.altKey || event.ctrlKey || event.shiftKey) {
@@ -26976,15 +26987,13 @@
 	                        }
 	                }
 	        }, {
-	                key: 'render',
+	                key: "render",
 	                value: function render() {
-	                        var colors = ['#cecac7', '#ff102d', '#ffff31', '#8bff2c'];
-
 	                        var divStyle = {
 	                                backgroundColor: colors[this.state.value]
 	                        };
 
-	                        return _react2.default.createElement('div', { style: divStyle, className: 'pixel', onClick: this.onClick.bind(this), onMouseEnter: this.onEnter.bind(this), r: true });
+	                        return _react2.default.createElement("div", { style: divStyle, className: "pixel", onClick: this.onClick.bind(this), onMouseEnter: this.onEnter.bind(this), r: true });
 	                }
 	        }]);
 
@@ -26995,6 +27004,50 @@
 
 /***/ },
 /* 235 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var Service = function () {
+	        function Service() {
+	                _classCallCheck(this, Service);
+	        }
+
+	        _createClass(Service, [{
+	                key: "isActive",
+	                value: function isActive() {
+	                        return $.ajax({
+	                                type: 'GET',
+	                                url: "/active",
+	                                contentType: "application/json",
+	                                dataType: 'json'
+	                        });
+	                }
+	        }, {
+	                key: "upload",
+	                value: function upload(bitmap) {
+	                        var data = { bitmap: bitmap };
+	                        return $.ajax({
+	                                type: 'POST',
+	                                url: "/upload",
+	                                data: JSON.stringify(data),
+	                                contentType: "application/json",
+	                                dataType: 'json'
+	                        });
+	                }
+	        }]);
+
+	        return Service;
+	}();
+
+	module.exports = Service;
+
+/***/ },
+/* 236 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27007,7 +27060,7 @@
 
 	var _reactRouter = __webpack_require__(178);
 
-	var _navbar = __webpack_require__(236);
+	var _navbar = __webpack_require__(237);
 
 	var _navbar2 = _interopRequireDefault(_navbar);
 
@@ -27057,7 +27110,7 @@
 	module.exports = App;
 
 /***/ },
-/* 236 */
+/* 237 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
