@@ -27161,7 +27161,7 @@
 	                        return _react2.default.createElement(
 	                                'div',
 	                                { className: 'navbar' },
-	                                _react2.default.createElement('img', { className: 'logo', src: 'res/drawables/mididec.png' }),
+	                                _react2.default.createElement('img', { className: 'logo', src: 'res/drawables/datamatrix.png' }),
 	                                _react2.default.createElement(
 	                                        'div',
 	                                        { className: 'profile-icon material-icons', onClick: this.onAbout.bind(this) },
