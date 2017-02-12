@@ -29,7 +29,7 @@ class Home extends React.Component {
                         matrix = JSON.parse(matrix);
                 }
                 var s = new Service();
-                s.isActive().then(function (){this.state.active = true; this.setState(this.state);}.bind(this));
+                s.isActive().then(function (data){this.state.active = data.active; this.setState(this.state);}.bind(this));
                 this.state = {color: "#FF0000", matrix: matrix, active: false, service: s};
 
         }

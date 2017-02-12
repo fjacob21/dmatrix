@@ -13,7 +13,9 @@ def after_request(response):
 
 @application.route('/active')
 def active():
-    return jsonify({"active": True})
+    if os.path.exists('/dev/ttyACM0'):
+        return jsonify({"active": True})
+    return jsonify({"active": False})
 
 @application.route('/upload', methods=['POST'])
 def upload():

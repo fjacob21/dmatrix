@@ -26843,8 +26843,8 @@
 	                        matrix = JSON.parse(matrix);
 	                }
 	                var s = new _service2.default();
-	                s.isActive().then(function () {
-	                        this.state.active = true;this.setState(this.state);
+	                s.isActive().then(function (data) {
+	                        this.state.active = data.active;this.setState(this.state);
 	                }.bind(_this));
 	                _this.state = { color: "#FF0000", matrix: matrix, active: false, service: s };
 
