@@ -64,6 +64,8 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+	hljs.initHighlightingOnLoad();
+
 	(0, _reactDom.render)(_react2.default.createElement(
 	  _reactRouter.Router,
 	  { history: _reactRouter.hashHistory },
@@ -26817,6 +26819,8 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+	var code = 'void displayBitmap(const uint16_t bit[8][8]){\n  for (int i=0; i<8; i++)\n    for (int j=0; j<8; j++)\n      matrix.drawPixel(i, j, bit[j][i]);\n}\n\nvoid setup() {\n  displayBitmap(bitmap);\n}';
+
 	var Home = function (_React$Component) {
 	        _inherits(Home, _React$Component);
 
@@ -26848,6 +26852,27 @@
 	        }
 
 	        _createClass(Home, [{
+	                key: 'copyToClipboard',
+	                value: function copyToClipboard(text) {
+	                        if (window.clipboardData && window.clipboardData.setData) {
+	                                return clipboardData.setData("Text", text);
+	                        } else if (document.queryCommandSupported && document.queryCommandSupported("copy")) {
+	                                var textarea = document.createElement("textarea");
+	                                textarea.textContent = text;
+	                                textarea.style.position = "fixed";
+	                                document.body.appendChild(textarea);
+	                                textarea.select();
+	                                try {
+	                                        return document.execCommand("copy");
+	                                } catch (ex) {
+	                                        console.warn("Copy to clipboard failed.", ex);
+	                                        return false;
+	                                } finally {
+	                                        document.body.removeChild(textarea);
+	                                }
+	                        }
+	                }
+	        }, {
 	                key: 'buildBitmap',
 	                value: function buildBitmap() {
 	                        var result = "const uint16_t bitmap[8][8] = {\n";
@@ -26915,11 +26940,54 @@
 	                                { className: 'home' },
 	                                _react2.default.createElement(
 	                                        'div',
-	                                        { className: 'matrix' },
-	                                        matrix
-	                                ),
-	                                _react2.default.createElement('textarea', { className: 'result', rows: '4', cols: '50', value: result, onChange: this.onTextChange.bind(this) }),
-	                                uploadbt
+	                                        null,
+	                                        _react2.default.createElement(
+	                                                'div',
+	                                                { className: 'matrix-label' },
+	                                                'Matrix'
+	                                        ),
+	                                        _react2.default.createElement(
+	                                                'div',
+	                                                { className: 'display-row' },
+	                                                _react2.default.createElement(
+	                                                        'div',
+	                                                        { className: 'matrix' },
+	                                                        matrix
+	                                                ),
+	                                                _react2.default.createElement(
+	                                                        'div',
+	                                                        { className: 'result-box' },
+	                                                        _react2.default.createElement(
+	                                                                'pre',
+	                                                                { className: 'result' },
+	                                                                _react2.default.createElement(
+	                                                                        'code',
+	                                                                        { className: 'c+' },
+	                                                                        result
+	                                                                )
+	                                                        ),
+	                                                        uploadbt
+	                                                )
+	                                        ),
+	                                        _react2.default.createElement(
+	                                                'div',
+	                                                { className: 'examples-label' },
+	                                                'Examples'
+	                                        ),
+	                                        _react2.default.createElement(
+	                                                'div',
+	                                                { className: 'examples-row' },
+	                                                _react2.default.createElement(
+	                                                        'pre',
+	                                                        { className: 'drawBitmapCode' },
+	                                                        _react2.default.createElement(
+	                                                                'code',
+	                                                                { className: 'c++' },
+	                                                                code
+	                                                        )
+	                                                )
+	                                        )
+	                                )
 	                        );
 	                }
 	        }]);

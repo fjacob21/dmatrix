@@ -11,7 +11,22 @@ html, body {
   width: 100vw; }
 
 .home {
-  background-color: "blue"; }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; }
+  .home .matrix-label {
+    margin: 10px;
+    font-weight: bolder; }
+  .home .display-row {
+    display: flex;
+    flex-direction: row; }
+  .home .examples-label {
+    margin: 10px;
+    font-weight: bolder; }
+  .home .examples-row {
+    display: flex;
+    flex-direction: row; }
 
 .matrix {
   display: inline-block;
@@ -28,9 +43,23 @@ html, body {
   margin: 3px; }
 
 .result {
+  width: 400px; }
+  .result code {
+    width: 100%;
+    height: 100%; }
+
+.result-box {
+  display: flex;
+  flex-direction: column;
+  margin: 10px; }
+
+.drawBitmapCode {
+  display: flex;
   width: 400px;
-  height: 250px;
-  margin: 30px; }
+  margin: 10px; }
+  .drawBitmapCode code {
+    width: 100%;
+    height: 100%; }
 
 .navbar {
   background-color: #FFFFFF;
@@ -41,7 +70,7 @@ html, body {
   padding: 16px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.16); }
   .navbar .logo {
-    width: 50px;
+    width: 70px;
     position: absolute;
     left: 50%;
     transform: translate(-50%, -50%);

@@ -2,7 +2,17 @@ import React from 'react'
 import Pixel from './pixel'
 import Service from './service'
 
-class Home extends React.Component{
+var code = `void displayBitmap(const uint16_t bit[8][8]){
+  for (int i=0; i<8; i++)
+    for (int j=0; j<8; j++)
+      matrix.drawPixel(i, j, bit[j][i]);
+}
+
+void setup() {
+  displayBitmap(bitmap);
+}`;
+
+class Home extends React.Component {
         constructor(props) {
                 super(props);
                 var matrix = localStorage.getItem('data');
@@ -22,6 +32,26 @@ class Home extends React.Component{
                 s.isActive().then(function (){this.state.active = true; this.setState(this.state);}.bind(this));
                 this.state = {color: "#FF0000", matrix: matrix, active: false, service: s};
 
+        }
+
+        copyToClipboard(text) {
+                if (window.clipboardData && window.clipboardData.setData) {
+                        return clipboardData.setData("Text", text);
+                } else if (document.queryCommandSupported && document.queryCommandSupported("copy")) {
+                        var textarea = document.createElement("textarea");
+                        textarea.textContent = text;
+                        textarea.style.position = "fixed";
+                        document.body.appendChild(textarea);
+                        textarea.select();
+                        try {
+                                return document.execCommand("copy");
+                        } catch (ex) {
+                                console.warn("Copy to clipboard failed.", ex);
+                                return false;
+                        } finally {
+                                document.body.removeChild(textarea);
+                        }
+                }
         }
 
         buildBitmap() {
@@ -78,11 +108,30 @@ class Home extends React.Component{
                         uploadbt = <button onClick={this.upload.bind(this)}>Upload</button>;
                 return (
                         <div className='home'>
-                                <div className='matrix'>
-                                {matrix}
+                                <div>
+                                        <div className='matrix-label'>Matrix</div>
+                                        <div className='display-row'>
+                                                <div className='matrix'>
+                                                {matrix}
+                                                </div>
+                                                <div className='result-box'>
+                                                        <pre className='result'>
+                                                                <code className="c+">
+                                                                        {result}
+                                                                </code>
+                                                        </pre>
+                                                        {uploadbt}
+                                                </div>
+                                        </div>
+                                        <div className='examples-label'>Examples</div>
+                                        <div className='examples-row'>
+                                                <pre className='drawBitmapCode'>
+                                                        <code className="c++">
+                                                                {code}
+                                                        </code>
+                                                </pre>
+                                        </div>
                                 </div>
-                                <textarea className='result' rows="4" cols="50" value={result} onChange={this.onTextChange.bind(this)}/>
-                                {uploadbt}
                         </div>)
         }
 }
