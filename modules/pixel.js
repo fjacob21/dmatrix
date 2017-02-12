@@ -52,7 +52,7 @@ class Pixel extends React.Component{
                 };
 
                 return (
-                        <div style={divStyle} className='pixel' onClick={this.onClick.bind(this)} onMouseEnter={this.onEnter.bind(this)}r>
+                        <div style={divStyle} className='pixel' onClick={this.onClick.bind(this)} onMouseEnter={this.onEnter.bind(this)}>
 
                         </div>)
         }

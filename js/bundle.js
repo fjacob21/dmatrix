@@ -27061,7 +27061,7 @@
 	                                backgroundColor: colors[this.state.value]
 	                        };
 
-	                        return _react2.default.createElement("div", { style: divStyle, className: "pixel", onClick: this.onClick.bind(this), onMouseEnter: this.onEnter.bind(this), r: true });
+	                        return _react2.default.createElement("div", { style: divStyle, className: "pixel", onClick: this.onClick.bind(this), onMouseEnter: this.onEnter.bind(this) });
 	                }
 	        }]);
 
@@ -27191,6 +27191,10 @@
 
 	var _reactRouter = __webpack_require__(178);
 
+	var _about = __webpack_require__(238);
+
+	var _about2 = _interopRequireDefault(_about);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -27207,7 +27211,7 @@
 
 	                var _this = _possibleConstructorReturn(this, (Navbar.__proto__ || Object.getPrototypeOf(Navbar)).call(this, props));
 
-	                _this.state = { color: "#FF0000" };
+	                _this.state = { showAbout: false };
 	                return _this;
 	        }
 
@@ -27221,7 +27225,8 @@
 	                key: 'onAbout',
 	                value: function onAbout(event) {
 	                        event.preventDefault();
-	                        this.context.router.push("/about");
+	                        this.state.showAbout = true;
+	                        this.setState(this.state);
 	                }
 	        }, {
 	                key: 'render',
@@ -27234,7 +27239,8 @@
 	                                        'div',
 	                                        { className: 'profile-icon material-icons', onClick: this.onAbout.bind(this) },
 	                                        'face'
-	                                )
+	                                ),
+	                                _react2.default.createElement(_about2.default, { show: this.state.showAbout })
 	                        );
 	                }
 	        }]);
@@ -27246,6 +27252,148 @@
 	        router: _react.PropTypes.object.isRequired
 	};
 	module.exports = Navbar;
+
+/***/ },
+/* 238 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var About = function (_React$Component) {
+		_inherits(About, _React$Component);
+
+		function About(props) {
+			_classCallCheck(this, About);
+
+			var _this = _possibleConstructorReturn(this, (About.__proto__ || Object.getPrototypeOf(About)).call(this, props));
+
+			_this.hideOnOuterClick = _this.hideOnOuterClick.bind(_this);
+			var opacity = 0;
+			if (_this.props.show) opacity = 1;
+			_this.state = {
+				show: _this.props.show,
+				opacity: opacity
+			};
+			return _this;
+		}
+
+		_createClass(About, [{
+			key: 'componentWillReceiveProps',
+			value: function componentWillReceiveProps(props) {
+				var _this2 = this;
+
+				var opacity = 0;
+				this.setState({
+					show: props.show,
+					opacity: opacity
+				}, function () {
+					setTimeout(function () {
+						_this2.state.opacity = 1;
+						_this2.setState(_this2.state);
+					}, 10);
+				});
+			}
+		}, {
+			key: 'hideOnOuterClick',
+			value: function hideOnOuterClick(event) {
+				this.state.show = false;
+				this.state.opacity = 0;
+				this.setState(this.state);
+			}
+		}, {
+			key: 'render',
+			value: function render() {
+				if (!this.state.show) return null;
+				var style = { opacity: this.state.opacity };
+				return _react2.default.createElement(
+					'div',
+					{ className: 'about', style: style, onClick: this.hideOnOuterClick, 'data-modal': 'true' },
+					_react2.default.createElement(
+						'div',
+						{ className: 'container' },
+						_react2.default.createElement(
+							'h1',
+							null,
+							'About'
+						),
+						_react2.default.createElement(
+							'table',
+							null,
+							_react2.default.createElement(
+								'tbody',
+								null,
+								_react2.default.createElement(
+									'tr',
+									{ style: { height: '2px' } },
+									_react2.default.createElement('th', { style: { backgroundColor: 'red' } }),
+									_react2.default.createElement('th', { style: { backgroundColor: 'orange' } }),
+									_react2.default.createElement('th', { style: { backgroundColor: 'green' } }),
+									_react2.default.createElement('th', { style: { backgroundColor: 'purple' } })
+								),
+								_react2.default.createElement(
+									'tr',
+									null,
+									_react2.default.createElement(
+										'th',
+										null,
+										'Frederic Jacob Eng. '
+									),
+									_react2.default.createElement(
+										'th',
+										null,
+										'| Hacker  '
+									),
+									_react2.default.createElement(
+										'th',
+										null,
+										'| ',
+										_react2.default.createElement(
+											'a',
+											{ href: 'https://github.com/fjacob21/dmatrix' },
+											'GitHub '
+										)
+									),
+									_react2.default.createElement(
+										'th',
+										null,
+										'|\uD83D\uDC0E'
+									)
+								)
+							)
+						),
+						_react2.default.createElement('br', null),
+						_react2.default.createElement(
+							'span',
+							{ className: 'copyright' },
+							'\xA9Frederic Jacob Eng.'
+						)
+					)
+				);
+			}
+		}]);
+
+		return About;
+	}(_react2.default.Component);
+
+	exports.default = About;
 
 /***/ }
 /******/ ]);

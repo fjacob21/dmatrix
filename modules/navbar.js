@@ -1,10 +1,11 @@
 import React , { Component, PropTypes } from 'react'
 import { browserHistory} from 'react-router'
+import About from './about'
 
 class Navbar extends React.Component{
         constructor(props) {
                 super(props);
-                this.state = {color: "#FF0000"};
+                this.state = {showAbout:false};
         }
 
         componentDidMount(){
@@ -15,7 +16,8 @@ class Navbar extends React.Component{
 
         onAbout(event){
                 event.preventDefault();
-                this.context.router.push("/about")
+                this.state.showAbout = true;
+                this.setState(this.state);
         }
 
         render(){
@@ -23,6 +25,7 @@ class Navbar extends React.Component{
                         <div className='navbar'>
                                 <img className='logo' src='res/drawables/datamatrix.png' />
                                 <div className='profile-icon material-icons' onClick={this.onAbout.bind(this)}>face</div>
+                                <About show={this.state.showAbout} />
                         </div>)
         }
 }
