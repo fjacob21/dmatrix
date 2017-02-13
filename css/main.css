@@ -19,7 +19,6 @@ html, body {
 
 .about {
   position: fixed;
-  font-family: 'Arial, Helvetica, sans-serif';
   top: 0;
   right: 0;
   bottom: 0;
@@ -76,7 +75,7 @@ html, body {
 
 .drawBitmapCode {
   display: flex;
-  width: 400px;
+  width: 100%;
   margin: 10px; }
   .drawBitmapCode code {
     width: 100%;

@@ -26819,7 +26819,7 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var code = 'void displayBitmap(const uint16_t bit[8][8]){\n  for (int i=0; i<8; i++)\n    for (int j=0; j<8; j++)\n      matrix.drawPixel(i, j, bit[j][i]);\n}\n\nvoid setup() {\n  displayBitmap(bitmap);\n}';
+	var code = '#include <Adafruit_LEDBackpack.h>\nAdafruit_BicolorMatrix matrix = Adafruit_BicolorMatrix();\n\n<bitmap>\n\nvoid displayBitmap(const uint16_t bit[8][8]){\n  for (int i=0; i<8; i++)\n    for (int j=0; j<8; j++)\n      matrix.drawPixel(i, j, bit[j][i]);\n}\n\nvoid setup() {\n  matrix.begin();\n  displayBitmap(bitmap);\n  matrix.writeDisplay();\n}';
 
 	var Home = function (_React$Component) {
 	        _inherits(Home, _React$Component);
@@ -26929,6 +26929,7 @@
 	                                );
 	                        }.bind(this));
 	                        var result = this.buildBitmap();
+	                        var dcode = code.replace('<bitmap>', result);
 	                        var uploadbt = "";
 	                        if (this.state.active) uploadbt = _react2.default.createElement(
 	                                'button',
@@ -26983,7 +26984,7 @@
 	                                                        _react2.default.createElement(
 	                                                                'code',
 	                                                                { className: 'c++' },
-	                                                                code
+	                                                                dcode
 	                                                        )
 	                                                )
 	                                        )

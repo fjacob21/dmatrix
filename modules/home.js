@@ -2,14 +2,21 @@ import React from 'react'
 import Pixel from './pixel'
 import Service from './service'
 
-var code = `void displayBitmap(const uint16_t bit[8][8]){
+var code = `#include <Adafruit_LEDBackpack.h>
+Adafruit_BicolorMatrix matrix = Adafruit_BicolorMatrix();
+
+<bitmap>
+
+void displayBitmap(const uint16_t bit[8][8]){
   for (int i=0; i<8; i++)
     for (int j=0; j<8; j++)
       matrix.drawPixel(i, j, bit[j][i]);
 }
 
 void setup() {
+  matrix.begin();
   displayBitmap(bitmap);
+  matrix.writeDisplay();
 }`;
 
 class Home extends React.Component {
@@ -103,6 +110,7 @@ class Home extends React.Component {
                         );
                  }.bind(this));
                  var result = this.buildBitmap();
+                 var dcode = code.replace('<bitmap>', result);
                  var uploadbt = "";
                  if (this.state.active)
                         uploadbt = <button onClick={this.upload.bind(this)}>Upload</button>;
@@ -127,7 +135,7 @@ class Home extends React.Component {
                                         <div className='examples-row'>
                                                 <pre className='drawBitmapCode'>
                                                         <code className="c++">
-                                                                {code}
+                                                                {dcode}
                                                         </code>
                                                 </pre>
                                         </div>
