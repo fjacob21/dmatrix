@@ -26846,8 +26846,11 @@
 	                s.isActive().then(function (data) {
 	                        this.state.active = data.active;this.setState(this.state);
 	                }.bind(_this));
-	                _this.state = { color: "#FF0000", matrix: matrix, active: false, service: s };
-
+	                _this.state = { color: "#FF0000", matrix: matrix, active: false, service: s, connected: false };
+	                _this.device = null;
+	                _this.service = null;
+	                _this.tx = null;
+	                _this.rx = null;
 	                return _this;
 	        }
 
@@ -26916,6 +26919,65 @@
 	                        }.bind(this));
 	                }
 	        }, {
+	                key: 'onBLEUpload',
+	                value: function onBLEUpload(event) {
+	                        var _this2 = this;
+
+	                        var enc = new TextEncoder("utf-8");
+	                        var bmp = this.buildBitmap();
+	                        this.tx.writeValue(enc.encode("!B11:")).then(function () {
+	                                _this2.tx.writeValue(enc.encode("!B10;"));
+	                        });
+	                        //writeValue(enc.encode("!B10;"));
+	                }
+	        }, {
+	                key: 'onConnect',
+	                value: function onConnect(event) {
+	                        var _this3 = this;
+
+	                        navigator.bluetooth.requestDevice({
+	                                filters: [{
+	                                        name: "Fred's Friendly robot"
+	                                }],
+	                                optionalServices: ['6e400001-b5a3-f393-e0a9-e50e24dcca9e']
+	                        }).then(function (device) {
+	                                _this3.device = device;
+	                                device.ongattserverdisconnected = _this3.bluetoothDisconnect.bind(_this3);
+	                                return device.gatt.connect();
+	                        }).then(function (server) {
+	                                console.debug('Getting Services...', server);
+	                                return server.getPrimaryService("6e400001-b5a3-f393-e0a9-e50e24dcca9e");
+	                        }).then(function (service) {
+	                                _this3.service = service;
+	                                console.debug('Getting Characteristics...', service);
+	                                return service.getCharacteristic("6e400002-b5a3-f393-e0a9-e50e24dcca9e");
+	                        }).then(function (tx) {
+	                                console.debug(tx);
+	                                _this3.tx = tx;
+	                                return _this3.service.getCharacteristic("6e400003-b5a3-f393-e0a9-e50e24dcca9e");
+	                        }).then(function (rx) {
+	                                console.debug(rx);
+	                                _this3.rx = rx;
+	                                _this3.state.connected = true;
+	                                _this3.setState(_this3.state);
+	                        }).catch(function (error) {
+	                                console.log(error);
+	                        });
+	                }
+	        }, {
+	                key: 'bluetoothDisconnect',
+	                value: function bluetoothDisconnect() {
+	                        console.debug('disconnection');
+	                        this.state.connected = false;
+	                        this.device = null;
+	                        this.setState(this.state);
+	                }
+	        }, {
+	                key: 'onDisconnect',
+	                value: function onDisconnect(event) {
+	                        if (this.device != null) this.device.gatt.disconnect();
+	                }
+	        }, {
 	                key: 'render',
 	                value: function render() {
 	                        var matrix = this.state.matrix.map(function (row, i) {
@@ -26936,6 +26998,26 @@
 	                                { onClick: this.upload.bind(this) },
 	                                'Upload'
 	                        );
+	                        var bluetoothbt = "";
+	                        if (this.device == null) bluetoothbt = _react2.default.createElement(
+	                                'button',
+	                                { onClick: this.onConnect.bind(this) },
+	                                'Connect'
+	                        );else bluetoothbt = _react2.default.createElement(
+	                                'div',
+	                                null,
+	                                _react2.default.createElement(
+	                                        'button',
+	                                        { onClick: this.onDisconnect.bind(this) },
+	                                        'Disconnect'
+	                                ),
+	                                _react2.default.createElement(
+	                                        'button',
+	                                        { onClick: this.onBLEUpload.bind(this) },
+	                                        'Upload BLE'
+	                                )
+	                        );
+
 	                        return _react2.default.createElement(
 	                                'div',
 	                                { className: 'home' },
@@ -26967,7 +27049,8 @@
 	                                                                        result
 	                                                                )
 	                                                        ),
-	                                                        uploadbt
+	                                                        uploadbt,
+	                                                        bluetoothbt
 	                                                )
 	                                        ),
 	                                        _react2.default.createElement(

@@ -37,8 +37,11 @@ class Home extends React.Component {
                 }
                 var s = new Service();
                 s.isActive().then(function (data){this.state.active = data.active; this.setState(this.state);}.bind(this));
-                this.state = {color: "#FF0000", matrix: matrix, active: false, service: s};
-
+                this.state = {color: "#FF0000", matrix: matrix, active: false, service: s, connected: false};
+                this.device = null;
+                this.service = null;
+                this.tx = null;
+                this.rx = null;
         }
 
         copyToClipboard(text) {
@@ -96,6 +99,60 @@ class Home extends React.Component {
                  this.state.service.upload(this.buildBitmap()).fail(function (){alert('error')}.bind(this));
         }
 
+        onBLEUpload(event){
+                var enc = new TextEncoder("utf-8");
+                 var bmp = this.buildBitmap();
+                 this.tx.writeValue(enc.encode("!B11:")).then( () => {this.tx.writeValue(enc.encode("!B10;"));});
+                 //writeValue(enc.encode("!B10;"));
+        }
+
+        onConnect(event){
+                navigator.bluetooth.requestDevice({
+                  filters: [{
+                    name: "Fred's Friendly robot"
+                  }],
+                  optionalServices: ['6e400001-b5a3-f393-e0a9-e50e24dcca9e']
+                })
+                .then(device => {
+                   this.device = device;
+                   device.ongattserverdisconnected = this.bluetoothDisconnect.bind(this);
+                  return device.gatt.connect();
+                })
+                .then(server => {
+                      console.debug('Getting Services...', server);
+                      return server.getPrimaryService("6e400001-b5a3-f393-e0a9-e50e24dcca9e");
+                })
+                .then(service => {
+                      this.service = service;
+                      console.debug('Getting Characteristics...', service);
+                      return service.getCharacteristic("6e400002-b5a3-f393-e0a9-e50e24dcca9e");
+                })
+                .then(tx => {
+                        console.debug(tx);
+                        this.tx = tx;
+                        return this.service.getCharacteristic("6e400003-b5a3-f393-e0a9-e50e24dcca9e");
+                })
+                .then(rx => {
+                        console.debug(rx);
+                        this.rx = rx;
+                        this.state.connected = true;
+                        this.setState(this.state);
+                })
+                .catch(error => { console.log(error); });
+        }
+
+        bluetoothDisconnect(){
+                console.debug('disconnection');
+                this.state.connected = false;
+                this.device = null;
+                this.setState(this.state);
+        }
+
+        onDisconnect(event){
+                if (this.device != null)
+                        this.device.gatt.disconnect();
+        }
+
         render(){
                 var matrix = this.state.matrix.map(function (row, i) {
                         var matrixRow = row.map(function (item, j) {
@@ -114,6 +171,12 @@ class Home extends React.Component {
                  var uploadbt = "";
                  if (this.state.active)
                         uploadbt = <button onClick={this.upload.bind(this)}>Upload</button>;
+                var bluetoothbt = "";
+                if (this.device == null)
+                        bluetoothbt = (<button onClick={this.onConnect.bind(this)}>Connect</button>);
+                else
+                        bluetoothbt = (<div><button onClick={this.onDisconnect.bind(this)}>Disconnect</button><button onClick={this.onBLEUpload.bind(this)}>Upload BLE</button></div>);
+
                 return (
                         <div className='home'>
                                 <div>
@@ -129,6 +192,7 @@ class Home extends React.Component {
                                                                 </code>
                                                         </pre>
                                                         {uploadbt}
+                                                        {bluetoothbt}
                                                 </div>
                                         </div>
                                         <div className='examples-label'>Examples</div>
