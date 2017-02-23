@@ -26890,6 +26890,17 @@
 	                        return result;
 	                }
 	        }, {
+	                key: 'buildBitmapArray',
+	                value: function buildBitmapArray() {
+	                        var bmp = new Uint8Array(64);
+	                        this.state.matrix.map(function (row, i) {
+	                                var matrixRow = row.map(function (item, j) {
+	                                        bmp[i * 8 + j] = item;
+	                                }.bind(this));
+	                        }.bind(this));
+	                        return bmp;
+	                }
+	        }, {
 	                key: 'onChange',
 	                value: function onChange(x, y, value) {
 	                        this.state.matrix[y][x] = value;
@@ -26919,16 +26930,48 @@
 	                        }.bind(this));
 	                }
 	        }, {
-	                key: 'onBLEUpload',
-	                value: function onBLEUpload(event) {
+	                key: 'writeData',
+	                value: function writeData() {
 	                        var _this2 = this;
 
+	                        if (this.offset != this.size) {
+	                                var off = 10;
+	                                this.offset += off;
+	                                if (this.offset >= this.size) {
+	                                        off = this.size - (this.offset - off);
+	                                        this.offset = this.size;
+	                                }
+	                                console.debug(this.offset - off, this.offset, off, this.size, this.buf.subarray(this.offset - off, this.offset));
+	                                this.tx.writeValue(this.buf.subarray(this.offset - off, this.offset)).then(function () {
+	                                        _this2.writeData();
+	                                });
+	                        } else {
+	                                console.debug("Complete");
+	                        }
+	                }
+	        }, {
+	                key: 'onBLEUpload',
+	                value: function onBLEUpload(event) {
+	                        console.debug("Upload");
 	                        var enc = new TextEncoder("utf-8");
-	                        var bmp = this.buildBitmap();
-	                        this.tx.writeValue(enc.encode("!B11:")).then(function () {
-	                                _this2.tx.writeValue(enc.encode("!B10;"));
-	                        });
-	                        //writeValue(enc.encode("!B10;"));
+	                        var bmp = this.buildBitmapArray();
+	                        var size = 3 + 8 * 8;
+	                        var buf = new Uint8Array(size);
+	                        buf[0] = 33;
+	                        buf[1] = 68;
+	                        for (var i = 2; i < size - 1; i++) {
+	                                buf[i] = bmp[i - 2];
+	                        }var xsum = 0;
+	                        for (var i = 0; i < size - 1; i++) {
+	                                xsum += buf[i];
+	                        }xsum = ~xsum & 0xff;
+	                        buf[size - 1] = xsum;
+	                        console.debug(buf, enc.encode("!B11:D"), xsum);
+	                        this.buf = buf;
+	                        this.offset = 0;
+	                        this.size = size;
+	                        this.writeData();
+	                        // this.tx.writeValue(enc.encode("!B11:")).then( () => {this.tx.writeValue(enc.encode("!B10;"));});
 	                }
 	        }, {
 	                key: 'onConnect',
@@ -26975,6 +27018,7 @@
 	        }, {
 	                key: 'onDisconnect',
 	                value: function onDisconnect(event) {
+	                        console.debug('bt disconnection');
 	                        if (this.device != null) this.device.gatt.disconnect();
 	                }
 	        }, {
