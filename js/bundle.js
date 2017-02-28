@@ -26941,7 +26941,7 @@
 	                                        off = this.size - (this.offset - off);
 	                                        this.offset = this.size;
 	                                }
-	                                console.debug(this.offset - off, this.offset, off, this.size, this.buf.subarray(this.offset - off, this.offset));
+	                                //console.debug(this.offset-off,this.offset, off, this.size, this.buf.subarray(this.offset-off,this.offset));
 	                                this.tx.writeValue(this.buf.subarray(this.offset - off, this.offset)).then(function () {
 	                                        _this2.writeData();
 	                                });
@@ -26966,23 +26966,26 @@
 	                                xsum += buf[i];
 	                        }xsum = ~xsum & 0xff;
 	                        buf[size - 1] = xsum;
-	                        console.debug(buf, enc.encode("!B11:D"), xsum);
 	                        this.buf = buf;
 	                        this.offset = 0;
 	                        this.size = size;
 	                        this.writeData();
-	                        // this.tx.writeValue(enc.encode("!B11:")).then( () => {this.tx.writeValue(enc.encode("!B10;"));});
 	                }
 	        }, {
 	                key: 'onConnect',
 	                value: function onConnect(event) {
 	                        var _this3 = this;
 
+	                        // navigator.bluetooth.requestDevice({
+	                        //   filters: [{
+	                        //     name: "Dmatrix display"
+	                        //   }],
+	                        //   optionalServices: ['6e400001-b5a3-f393-e0a9-e50e24dcca9e']
+	                        // })
 	                        navigator.bluetooth.requestDevice({
 	                                filters: [{
-	                                        name: "Fred's Friendly robot"
-	                                }],
-	                                optionalServices: ['6e400001-b5a3-f393-e0a9-e50e24dcca9e']
+	                                        services: ['6e400001-b5a3-f393-e0a9-e50e24dcca9e']
+	                                }]
 	                        }).then(function (device) {
 	                                _this3.device = device;
 	                                device.ongattserverdisconnected = _this3.bluetoothDisconnect.bind(_this3);

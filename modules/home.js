@@ -116,7 +116,7 @@ class Home extends React.Component {
                                 off = this.size - (this.offset - off);
                                 this.offset = this.size;
                         }
-                        console.debug(this.offset-off,this.offset, off, this.size, this.buf.subarray(this.offset-off,this.offset));
+                        //console.debug(this.offset-off,this.offset, off, this.size, this.buf.subarray(this.offset-off,this.offset));
                         this.tx.writeValue(this.buf.subarray(this.offset-off,this.offset)).then(() => {this.writeData();});
                 }
                 else {
@@ -139,20 +139,23 @@ class Home extends React.Component {
                         xsum += buf[i];
                 xsum = ~xsum & 0xff;
                 buf[size-1] = xsum;
-                console.debug(buf, enc.encode("!B11:D"), xsum);
                 this.buf = buf;
                 this.offset = 0;
                 this.size = size;
                 this.writeData();
-                // this.tx.writeValue(enc.encode("!B11:")).then( () => {this.tx.writeValue(enc.encode("!B10;"));});
         }
 
         onConnect(event){
+                // navigator.bluetooth.requestDevice({
+                //   filters: [{
+                //     name: "Dmatrix display"
+                //   }],
+                //   optionalServices: ['6e400001-b5a3-f393-e0a9-e50e24dcca9e']
+                // })
                 navigator.bluetooth.requestDevice({
                   filters: [{
-                    name: "Fred's Friendly robot"
-                  }],
-                  optionalServices: ['6e400001-b5a3-f393-e0a9-e50e24dcca9e']
+                          services: ['6e400001-b5a3-f393-e0a9-e50e24dcca9e']
+                  }]
                 })
                 .then(device => {
                    this.device = device;
@@ -217,7 +220,10 @@ class Home extends React.Component {
                 if (this.device == null)
                         bluetoothbt = (<button onClick={this.onConnect.bind(this)}>Connect</button>);
                 else
-                        bluetoothbt = (<div><button onClick={this.onDisconnect.bind(this)}>Disconnect</button><button onClick={this.onBLEUpload.bind(this)}>Upload BLE</button></div>);
+                        bluetoothbt = ( <div>
+                                                <button onClick={this.onDisconnect.bind(this)}>Disconnect</button>
+                                                <button onClick={this.onBLEUpload.bind(this)}>Upload BLE</button>
+                                        </div> );
 
                 return (
                         <div className='home'>
