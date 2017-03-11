@@ -93,7 +93,7 @@ class Home extends React.Component {
         }
 
         onTextChange(event){
-                console.debug(event, event.target.value);
+                console.debug('text changed',event, event.target.value);
         }
 
         success(data){
@@ -218,7 +218,7 @@ class Home extends React.Component {
                         uploadbt = <button onClick={this.upload.bind(this)}>Upload</button>;
                 var bluetoothbt = "";
                 if (this.device == null)
-                        bluetoothbt = (<button onClick={this.onConnect.bind(this)}>Connect</button>);
+                        bluetoothbt = (<button onClick={this.onConnect.bind(this)}>Web Bluetooth Connect</button>);
                 else
                         bluetoothbt = ( <div>
                                                 <button onClick={this.onDisconnect.bind(this)}>Disconnect</button>
@@ -251,6 +251,7 @@ class Home extends React.Component {
                                                         </code>
                                                 </pre>
                                         </div>
+                                        <div className="blelink"><a href="https://github.com/fjacob21/dmatrix/tree/master/server/dmatrixble" target="_blank">Bluetooth Arduino code</a></div>
                                 </div>
                         </div>)
         }

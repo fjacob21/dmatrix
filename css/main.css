@@ -47,6 +47,8 @@ html, body {
   .home .examples-row {
     display: flex;
     flex-direction: row; }
+  .home .blelink {
+    margin: 10px; }
 
 .matrix {
   display: inline-block;

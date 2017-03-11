@@ -26910,7 +26910,7 @@
 	        }, {
 	                key: 'onTextChange',
 	                value: function onTextChange(event) {
-	                        console.debug(event, event.target.value);
+	                        console.debug('text changed', event, event.target.value);
 	                }
 	        }, {
 	                key: 'success',
@@ -27049,7 +27049,7 @@
 	                        if (this.device == null) bluetoothbt = _react2.default.createElement(
 	                                'button',
 	                                { onClick: this.onConnect.bind(this) },
-	                                'Connect'
+	                                'Web Bluetooth Connect'
 	                        );else bluetoothbt = _react2.default.createElement(
 	                                'div',
 	                                null,
@@ -27116,6 +27116,15 @@
 	                                                                { className: 'c++' },
 	                                                                dcode
 	                                                        )
+	                                                )
+	                                        ),
+	                                        _react2.default.createElement(
+	                                                'div',
+	                                                { className: 'blelink' },
+	                                                _react2.default.createElement(
+	                                                        'a',
+	                                                        { href: 'https://github.com/fjacob21/dmatrix/tree/master/server/dmatrixble', target: '_blank' },
+	                                                        'Bluetooth Arduino code'
 	                                                )
 	                                        )
 	                                )
@@ -27463,7 +27472,7 @@
 						_react2.default.createElement(
 							'h1',
 							null,
-							'About'
+							'Dmatrix'
 						),
 						_react2.default.createElement(
 							'table',

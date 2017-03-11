@@ -38,7 +38,7 @@ export default class About extends React.Component{
                 return (
                         <div className='about' style={style} onClick={this.hideOnOuterClick} data-modal="true">
 				<div className='container'>
-				<h1>About</h1>
+				<h1>Dmatrix</h1>
 				<table>
 				    <tbody>
 				    <tr style={{height:'2px'}}><th style={{backgroundColor:'red'}}></th><th style={{backgroundColor:'orange'}}></th><th style={{backgroundColor:'green'}}></th><th style={{backgroundColor:'purple'}}></th></tr>
